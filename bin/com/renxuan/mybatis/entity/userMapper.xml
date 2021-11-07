@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.reunxuan.mybatis.entity.userMapper">
+	<!-- 根据id查询users表中对应的记录，返回一个User对象 -->
+	<select id="selectUserById" parameterType="int" resultMap="userResult">
+		select * from user where id = #{当参数是自定义类型就不能随便写}
+	</select>
+	<!-- 使用了类型转换器 
+		如果类中属性和表中的字段类型能合理识别使用resultType
+		否则(Boolean->int)使用resultMap
+	-->
+	<!-- resultMap的作用是在java实体类中属性名与数据库中列名不对应的时候使用
+		以及属性-字段映射关系 
+		在使用的时候此程序去掉也没问题，但是发现仅仅通过conf.xml的
+		<typeHandlers>
+			<typeHandler handler="com.renxuan.mybatis.converter.BooleanAndIntConverter"
+			javaType="Boolean" jdbcType="INTEGER"/>
+		</typeHandlers>
+		这类转换器声明以及转换器实现并没有指定字段类型仅仅是sex的可以进行boolean与int转换
+		猜想应该是对于全体存在Boolean与int匹配的那些字段类型全部转换，如果要指定应该是在resultMap中指定
+	-->
+	<resultMap type="com.renxuan.mybatis.entity.User" id="userResult">
+		<!-- 主键id和非主键 result-->
+		<!-- 主键 -->
+		<id property="id" column="id"/>
+		<!-- 非主键 -->
+		<result property="name" column="name"/>
+		<result property="age" column="age"/>
+		<result property="SEX" column="sex" javaType="com.renxuan.mybatis.entity.SEX" jdbcType="INTEGER"
+			typeHandler="com.renxuan.mybatis.converter.sexTypeHandler"
+		/>	
+	</resultMap>
+	
+	<select id="selectUserByIdWithConverter" parameterType="int" resultMap="userResult">
+		select * from user where id = #{当参数是自定义类型就不能随便写}
+	</select>
+	<!-- 免注册TypeHandler -->
+	<insert id="insertUser" parameterType="com.renxuan.mybatis.entity.User" >
+		insert into user (id,name,age,sex) values(#{id},#{name},#{age},
+		#{sex,javaType=com.renxuan.mybatis.entity.SEX,jdbcType=INTEGER,typeHandler=com.renxuan.mybatis.converter.sexTypeHandler})
+	</insert>
+
+	<delete id="deleteUserById" parameterType="int">
+		delete from user where id =#{id}
+	</delete>
+	
+	<update id="updateUserById" parameterType="com.renxuan.mybatis.entity.User">
+		update user set name=#{name},age=#{age} ,
+		sex=#{sex,javaType=com.renxuan.mybatis.entity.SEX,jdbcType=INTEGER,typeHandler=com.renxuan.mybatis.converter.sexTypeHandler} 
+		where id=#{id}
+	</update>
+	<select id="selectAllUser" resultMap="userResult">
+	<!-- 别名方式 -->
+	<!-- 返回值是对象集合resultType也仅仅写此对象 -->
+		select * from user
+	</select>
+</mapper>

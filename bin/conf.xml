@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties resource="db.properties"></properties>
+	<!-- 全局变量设置
+		<settings>
+			<setting name="" value=""/>
+		</settings>
+	 -->
+	<!-- 别名 -->	
+	<typeAliases>
+		<!-- 单别名 (忽略大小写)
+			<typeAlias type="com.renxuan.mybatis.entity.User" alias="user"/>
+		-->
+		<!-- 批量定义别名(包内类不用加路径)-->
+		<package name="com.renxuan.mybatis.entity"/>
+		<!-- myBatis还内置了别名 -->
+	</typeAliases>
+	
+	
+	<!-- 
+		类转换器 :注册TypeHandler
+	<typeHandlers>
+		<typeHandler handler="com.renxuan.mybatis.converter.BooleanAndIntConverter"
+		javaType="Boolean" jdbcType="INTEGER"/>
+	</typeHandlers>	
+	
+	-->
+	<!-- 可选的配置方式 -->
+	<environments default="real">
+		<!-- 可以在不同环境下执行时候只需要调整default -->
+		<environment id="template">
+			<transactionManager type="JDBC" />
+			<!-- 
+				JDBC：事务是通过JDBC方式 ：手动commit rollback close
+				MANAGED：十五交给其他组件去托管Spring 、jobss
+				-->
+			
+			<dataSource type="POOLED">
+			<!-- 
+				POOLED使用第三方连接池
+				UMPOOLED是使用传统的JDBC模式
+				也可以配置JNDI方式：从tomcat获取内置数据库连接池
+			 -->
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url"
+					value="jdbc:mysql://localhost:3306/mybatis?serverTimezone=UTC&amp;useUnicode=true;"/>
+				<property name="username" value="root" />
+				<property name="password" value="password" />
+			</dataSource>
+		</environment>
+
+
+		
+		<environment id="real">
+			<!-- 可以在不同环境下执行 的id-->
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED"><!-- 连接池 -->
+				<!-- 动态引入 -->
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}"/>
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<mappers>
+		<mapper resource="com/renxuan/mybatis/entity/userMapper.xml" />
+	</mappers>
+</configuration>	
+	
